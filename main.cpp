@@ -5,7 +5,7 @@
 #include <boost/numeric/odeint.hpp>
 
 #include "state_type.h"
-#include "sys_g.h"
+#include "sys_SM.h"
 #include "sys_SMEFT.h"
 
 using namespace std;
@@ -28,6 +28,7 @@ double dth, dtl;
 //EW input
 double g_ew, gp_ew, gs_ew;
 double gqcd_ew, eqed_ew;
+double Gu33_ew;
 double sw_ew;
 
 double clq1_1_ew, clq1_2_ew, clq1_3_ew;
@@ -36,6 +37,7 @@ double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 
 //high scale input
 double g_h, gp_h, gs_h;
+double Gu33_h;
 
 double clq1_1_h, clq1_2_h, clq1_3_h;
 double clq3_1_h, clq3_2_h, clq3_3_h;
@@ -44,6 +46,7 @@ double cqe_1_h, cqe_2_h, cqe_3_h;
 //system functions
 state_type g_run, gp_run, gs_run;
 state_type gqcd_run, eqed_run;
+state_type Gu33_run;
 
 state_type clq1_1_run, clq1_2_run, clq1_3_run;
 state_type clq3_1_run, clq3_2_run, clq3_3_run;
@@ -53,6 +56,7 @@ g_ew = 0.6515;
 gp_ew = 0.3576;
 gs_ew = 1.220;
 gqcd_ew = 1.220;
+Gu33_ew = 1.000;
 sw_ew = sqrt(gp_ew*gp_ew/(gp_ew*gp_ew+g_ew*g_ew));
 eqed_ew = g_ew*sw_ew;
 
@@ -78,9 +82,12 @@ cqe_3_h = 0.0e-6;
 g_run[0] = g_ew;
 gp_run[0] = gp_ew;
 gs_run[0] = gs_ew;
+Gu33_run[0] = Gu33_ew;
 
 for(size_t i=0; i<STEP; ++i) {
+  sys_Gu33 sf_Gu33(g_run[0], gp_run[0], gs_run[0]);
   runge_kutta4< state_type > rk;
+  rk.do_step(sf_Gu33, Gu33_run, log_ewscale, dth);
   rk.do_step(sys_g, g_run, log_ewscale, dth);
   rk.do_step(sys_gp, gp_run, log_ewscale, dth);
   rk.do_step(sys_gs, gs_run, log_ewscale, dth);
@@ -103,6 +110,7 @@ cout<<"high scale: "<<exp(log_ewscale)<<endl;
 cout<<"g="<<g_run[0]<<endl;
 cout<<"gp="<<gp_run[0]<<endl;
 cout<<"gs="<<gs_run[0]<<endl;
+cout<<"Gu33="<<Gu33_run[0]<<endl;
 cout<<"clq1_1="<<clq1_1_run[0]<<endl;
 cout<<"clq1_2="<<clq1_2_run[0]<<endl;
 cout<<"clq1_3="<<clq1_3_run[0]<<endl;
@@ -114,15 +122,16 @@ cout<<"cqe_2="<<cqe_2_run[0]<<endl;
 cout<<"cqe_3="<<cqe_3_run[0]<<endl;
 
 for(size_t i=0; i<STEP; ++i) {
-  sys_lq1 sf_lq1_1(g_run[0], gp_run[0], clq1_2_run[0], clq1_3_run[0], clq3_1_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
-  sys_lq1 sf_lq1_2(g_run[0], gp_run[0], clq1_3_run[0], clq1_1_run[0], clq3_2_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
-  sys_lq1 sf_lq1_3(g_run[0], gp_run[0], clq1_1_run[0], clq1_2_run[0], clq3_3_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
-  sys_lq3 sf_lq3_1(g_run[0], gp_run[0], clq3_2_run[0], clq3_3_run[0], clq1_1_run[0]);
-  sys_lq3 sf_lq3_2(g_run[0], gp_run[0], clq3_3_run[0], clq3_1_run[0], clq1_2_run[0]);
-  sys_lq3 sf_lq3_3(g_run[0], gp_run[0], clq3_1_run[0], clq3_2_run[0], clq1_3_run[0]);
-  sys_qe sf_qe_1(gp_run[0], cqe_2_run[0], cqe_3_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
-  sys_qe sf_qe_2(gp_run[0], cqe_3_run[0], cqe_1_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
-  sys_qe sf_qe_3(gp_run[0], cqe_1_run[0], cqe_2_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
+  sys_lq1 sf_lq1_1(g_run[0], gp_run[0], Gu33_run[0], clq1_2_run[0], clq1_3_run[0], clq3_1_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
+  sys_lq1 sf_lq1_2(g_run[0], gp_run[0], Gu33_run[0], clq1_3_run[0], clq1_1_run[0], clq3_2_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
+  sys_lq1 sf_lq1_3(g_run[0], gp_run[0], Gu33_run[0], clq1_1_run[0], clq1_2_run[0], clq3_3_run[0], cqe_1_run[0], cqe_2_run[0], cqe_3_run[0]);
+  sys_lq3 sf_lq3_1(g_run[0], gp_run[0], Gu33_run[0], clq3_2_run[0], clq3_3_run[0], clq1_1_run[0]);
+  sys_lq3 sf_lq3_2(g_run[0], gp_run[0], Gu33_run[0], clq3_3_run[0], clq3_1_run[0], clq1_2_run[0]);
+  sys_lq3 sf_lq3_3(g_run[0], gp_run[0], Gu33_run[0], clq3_1_run[0], clq3_2_run[0], clq1_3_run[0]);
+  sys_qe sf_qe_1(gp_run[0], Gu33_run[0], cqe_2_run[0], cqe_3_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
+  sys_qe sf_qe_2(gp_run[0], Gu33_run[0], cqe_3_run[0], cqe_1_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
+  sys_qe sf_qe_3(gp_run[0], Gu33_run[0], cqe_1_run[0], cqe_2_run[0], clq1_1_run[0], clq1_2_run[0], clq1_3_run[0]);
+  sys_Gu33 sf_Gu33(g_run[0], gp_run[0], gs_run[0]);
   runge_kutta4< state_type > rk;
   rk.do_step(sf_lq1_1, clq1_1_run, log_ewscale, -dth);
   rk.do_step(sf_lq1_2, clq1_2_run, log_ewscale, -dth);
@@ -133,6 +142,7 @@ for(size_t i=0; i<STEP; ++i) {
   rk.do_step(sf_qe_1, cqe_1_run, log_ewscale, -dth);
   rk.do_step(sf_qe_2, cqe_2_run, log_ewscale, -dth);
   rk.do_step(sf_qe_3, cqe_3_run, log_ewscale, -dth);
+  rk.do_step(sf_Gu33, Gu33_run, log_ewscale, -dth);
   rk.do_step(sys_g, g_run, log_ewscale, -dth);
   rk.do_step(sys_gp, gp_run, log_ewscale, -dth);
   rk.do_step(sys_gs, gs_run, log_ewscale, -dth);
@@ -144,6 +154,7 @@ cout<<"EW scale: "<<ewscale<<endl;
 cout<<"g="<<g_run[0]<<endl;
 cout<<"gp="<<gp_run[0]<<endl;
 cout<<"gs="<<gs_run[0]<<endl;
+cout<<"Gu33="<<Gu33_run[0]<<endl;
 cout<<"clq1_1="<<clq1_1_run[0]<<endl;
 cout<<"clq1_2="<<clq1_2_run[0]<<endl;
 cout<<"clq1_3="<<clq1_3_run[0]<<endl;
