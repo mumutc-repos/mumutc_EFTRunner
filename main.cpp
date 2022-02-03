@@ -7,6 +7,7 @@
 #include "state_type.h"
 #include "sys_SM.h"
 #include "sys_SMEFT.h"
+#include "sys_LEFT.h"
 
 using namespace std;
 using namespace boost::numeric::odeint;
@@ -35,6 +36,9 @@ double clq1_1_ew, clq1_2_ew, clq1_3_ew;
 double clq3_1_ew, clq3_2_ew, clq3_3_ew;
 double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 
+double ledvll_1_ew, ledvll_2_ew, ledvll_3_ew;
+double ldevlr_1_ew, ldevlr_2_ew, ldevlr_3_ew;
+
 //high scale input
 double g_h, gp_h, gs_h;
 double Gu33_h;
@@ -42,6 +46,10 @@ double Gu33_h;
 double clq1_1_h, clq1_2_h, clq1_3_h;
 double clq3_1_h, clq3_2_h, clq3_3_h;
 double cqe_1_h, cqe_2_h, cqe_3_h;
+
+//low scale input
+double ledvll_1_l, ledvll_2_l, ledvll_3_l;
+double ldevlr_1_l, ldevlr_2_l, ldevlr_3_l;
 
 //system functions
 state_type g_run, gp_run, gs_run;
@@ -51,6 +59,9 @@ state_type Gu33_run;
 state_type clq1_1_run, clq1_2_run, clq1_3_run;
 state_type clq3_1_run, clq3_2_run, clq3_3_run;
 state_type cqe_1_run, cqe_2_run, cqe_3_run;
+
+state_type ledvll_1_run, ledvll_2_run, ledvll_3_run;
+state_type ldevlr_1_run, ldevlr_2_run, ldevlr_3_run;
 
 g_ew = 0.6515;
 gp_ew = 0.3576;
@@ -65,6 +76,7 @@ log_ewscale = log(ewscale);
 log_lscale = log(lscale);
 
 dth = (log_hscale-log_ewscale)/STEP;
+dtl = (log_lscale-log_ewscale)/STEP;
 cout<<dth<<endl;
 
 clq1_1_h = 1.0e-6;
@@ -150,7 +162,7 @@ for(size_t i=0; i<STEP; ++i) {
   ofile<<exp(log_ewscale)<<" "<<cqe_1_run[0]<<endl; 
 }
 
-cout<<"EW scale: "<<ewscale<<endl;
+cout<<"EW scale: "<<exp(log_ewscale)<<endl;
 cout<<"g="<<g_run[0]<<endl;
 cout<<"gp="<<gp_run[0]<<endl;
 cout<<"gs="<<gs_run[0]<<endl;
@@ -164,6 +176,77 @@ cout<<"clq3_3="<<clq3_3_run[0]<<endl;
 cout<<"cqe_1="<<cqe_1_run[0]<<endl;
 cout<<"cqe_2="<<cqe_2_run[0]<<endl;
 cout<<"cqe_3="<<cqe_3_run[0]<<endl;
+
+clq1_1_ew = clq1_1_run[0];
+clq1_2_ew = clq1_2_run[0];
+clq1_3_ew = clq1_3_run[0];
+
+clq3_1_ew = clq3_1_run[0];
+clq3_2_ew = clq3_2_run[0];
+clq3_3_ew = clq3_3_run[0];
+
+cqe_1_ew = cqe_1_run[0];
+cqe_2_ew = cqe_2_run[0];
+cqe_3_ew = cqe_3_run[0];
+
+//matching
+ledvll_1_ew = clq1_1_ew+clq3_1_ew;
+ledvll_2_ew = clq1_2_ew+clq3_2_ew;
+ledvll_3_ew = clq1_3_ew+clq3_3_ew;
+
+ldevlr_1_ew = cqe_1_ew;
+ldevlr_2_ew = cqe_2_ew;
+ldevlr_3_ew = cqe_3_ew;
+
+eqed_run[0] = eqed_ew;
+gqcd_run[0] = gqcd_ew;
+
+ledvll_1_run[0] = ledvll_1_ew;
+ledvll_2_run[0] = ledvll_2_ew;
+ledvll_3_run[0] = ledvll_3_ew;
+
+ldevlr_1_run[0] = ldevlr_1_ew;
+ldevlr_2_run[0] = ldevlr_2_ew;
+ldevlr_3_run[0] = ldevlr_3_ew;
+
+cout<<"EW scale: "<<exp(log_ewscale)<<endl;
+cout<<"eqed="<<eqed_run[0]<<endl;
+cout<<"gqcd="<<gqcd_run[0]<<endl;
+cout<<"ledvll_1="<<ledvll_1_run[0]<<endl;
+cout<<"ledvll_2="<<ledvll_2_run[0]<<endl;
+cout<<"ledvll_3="<<ledvll_3_run[0]<<endl;
+cout<<"ldevlr_1="<<ldevlr_1_run[0]<<endl;
+cout<<"ldevlr_2="<<ldevlr_2_run[0]<<endl;
+cout<<"ldevlr_3="<<ldevlr_3_run[0]<<endl;
+
+for(size_t i=0; i<STEP; ++i) {
+  sys_edvll sf_edvll_1(eqed_run[0], ledvll_2_run[0], ledvll_3_run[0], ldevlr_1_run[0], ldevlr_2_run[0], ldevlr_3_run[0]);
+  sys_edvll sf_edvll_2(eqed_run[0], ledvll_3_run[0], ledvll_1_run[0], ldevlr_1_run[0], ldevlr_2_run[0], ldevlr_3_run[0]);
+  sys_edvll sf_edvll_3(eqed_run[0], ledvll_1_run[0], ledvll_2_run[0], ldevlr_1_run[0], ldevlr_2_run[0], ldevlr_3_run[0]);
+  sys_devlr sf_devlr_1(eqed_run[0], ldevlr_2_run[0], ldevlr_3_run[0], ledvll_1_run[0], ledvll_2_run[0], ledvll_3_run[0]);
+  sys_devlr sf_devlr_2(eqed_run[0], ldevlr_3_run[0], ldevlr_1_run[0], ledvll_1_run[0], ledvll_2_run[0], ledvll_3_run[0]);
+  sys_devlr sf_devlr_3(eqed_run[0], ldevlr_1_run[0], ldevlr_2_run[0], ledvll_1_run[0], ledvll_2_run[0], ledvll_3_run[0]);
+  runge_kutta4< state_type > rk;
+  rk.do_step(sf_edvll_1, ledvll_1_run, log_ewscale, dtl);
+  rk.do_step(sf_edvll_2, ledvll_2_run, log_ewscale, dtl);
+  rk.do_step(sf_edvll_3, ledvll_3_run, log_ewscale, dtl);
+  rk.do_step(sf_devlr_1, ldevlr_1_run, log_ewscale, dtl);
+  rk.do_step(sf_devlr_2, ldevlr_2_run, log_ewscale, dtl);
+  rk.do_step(sf_devlr_3, ldevlr_3_run, log_ewscale, dtl);
+  rk.do_step(sys_eqed, eqed_run, log_ewscale, dtl);
+  rk.do_step(sys_gqcd, gqcd_run, log_ewscale, dtl);
+  log_ewscale = log_ewscale + dtl;
+}
+
+cout<<"low scale: "<<exp(log_ewscale)<<endl;
+cout<<"eqed="<<eqed_run[0]<<endl;
+cout<<"gqcd="<<gqcd_run[0]<<endl;
+cout<<"ledvll_1="<<ledvll_1_run[0]<<endl;
+cout<<"ledvll_2="<<ledvll_2_run[0]<<endl;
+cout<<"ledvll_3="<<ledvll_3_run[0]<<endl;
+cout<<"ldevlr_1="<<ldevlr_1_run[0]<<endl;
+cout<<"ldevlr_2="<<ldevlr_2_run[0]<<endl;
+cout<<"ldevlr_3="<<ldevlr_3_run[0]<<endl;
 
 return 0;
 }//end of main
