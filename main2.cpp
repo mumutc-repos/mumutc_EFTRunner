@@ -16,6 +16,9 @@ const int STEP = 100;
 
 int main(int argc, char **argv) {
 
+fstream ofile;
+ofile.open("output2.txt", ios_base::out);
+
 double hscale = 1000.0;
 double ewscale = 91.1876;
 double lscale = 5.0;
@@ -38,6 +41,10 @@ double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 
 //low scale input
 double gqcd_l, eqed_l;
+double vtb = 1.013;
+double vts = 0.0388;
+double Gf = 1.1663787e-5;
+double factor;
 
 double ledvll_1_l, ledvll_2_l, ledvll_3_l;
 double ldevlr_1_l, ldevlr_2_l, ldevlr_3_l;
@@ -77,11 +84,11 @@ log_lscale = log(lscale);
 dth = (log_hscale-log_ewscale)/STEP;
 dtl = (log_ewscale-log_lscale)/STEP;
 
-ledvll_1_l = 1.0e-6;
+ledvll_1_l = 0.66;
 ledvll_2_l = 0.0e-6;
 ledvll_3_l = 0.0e-6;
 
-ldevlr_1_l = 0.0e-6;
+ldevlr_1_l = -0.66;
 ldevlr_2_l = 0.0e-6;
 ldevlr_3_l = 0.0e-6;
 
@@ -95,18 +102,21 @@ for(size_t i=0; i<STEP; ++i) {
   log_ewscale = log_ewscale - dtl;
 }
 
-//LEFT run
-ledvll_1_run[0] = ledvll_1_l;
-ledvll_2_run[0] = ledvll_2_l;
-ledvll_3_run[0] = ledvll_3_l;
+factor = 4.0*Gf*vtb*vts*eqed_run[0]*eqed_run[0]/(16.0*M_PI*M_PI)/sqrt(2);
 
-ldevlr_1_run[0] = ldevlr_1_l;
-ldevlr_2_run[0] = ldevlr_2_l;
-ldevlr_3_run[0] = ldevlr_3_l;
+//LEFT run
+ledvll_1_run[0] = ledvll_1_l*factor/2.0;
+ledvll_2_run[0] = ledvll_2_l*factor/2.0;
+ledvll_3_run[0] = ledvll_3_l*factor/2.0;
+
+ldevlr_1_run[0] = ldevlr_1_l*factor/2.0;
+ldevlr_2_run[0] = ldevlr_2_l*factor/2.0;
+ldevlr_3_run[0] = ldevlr_3_l*factor/2.0;
 
 cout<<"low scale: "<<exp(log_ewscale)<<endl;
 cout<<"eqed="<<eqed_run[0]<<endl;
 cout<<"gqcd="<<gqcd_run[0]<<endl;
+cout<<"factor="<<factor<<endl;
 cout<<"ledvll_1="<<ledvll_1_run[0]<<endl;
 cout<<"ledvll_2="<<ledvll_2_run[0]<<endl;
 cout<<"ledvll_3="<<ledvll_3_run[0]<<endl;
@@ -131,6 +141,8 @@ for(size_t i=0; i<STEP; ++i) {
   rk.do_step(sys_eqed, eqed_run, log_lscale, dtl);
   rk.do_step(sys_gqcd, gqcd_run, log_lscale, dtl);
   log_lscale = log_lscale + dtl;
+  //ofile<<exp(log_lscale)<<" "<<ledvll_1_run[0]<<endl;
+  //ofile<<exp(log_lscale)<<" "<<ldevlr_1_run[0]<<endl;
 }
 
 cout<<"EW scale: "<<exp(log_lscale)<<endl;
@@ -153,14 +165,22 @@ ldevlr_3_ew = ldevlr_3_run[0];
 
 log_ewscale = log_lscale;
 
-//Case 1: ledvll = clq1
-clq1_1_ew = ledvll_1_ew;
-clq1_2_ew = ledvll_2_ew;
-clq1_3_ew = ledvll_3_ew;
+//Case 1: clq1 = ledvll
+//Case 2: clq3 = ledvll
+//Case 3: clq1 = clq3 = ledvll/2
+// clq1_1_ew = ledvll_1_ew;
+clq1_1_ew = 0.0;
+// clq1_2_ew = ledvll_2_ew;
+clq1_2_ew = 0.0;
+// clq1_3_ew = ledvll_3_ew;
+clq1_3_ew = 0.0;
 
-clq3_1_ew = 0.0;
-clq3_2_ew = 0.0;
-clq3_3_ew = 0.0;
+clq3_1_ew = ledvll_1_ew;
+// clq3_1_ew = 0.0;
+clq3_2_ew = ledvll_2_ew;
+// clq3_2_ew = 0.0;
+clq3_3_ew = ledvll_3_ew;
+// clq3_3_ew = 0.0;
 
 cqe_1_ew = ldevlr_1_ew;
 cqe_2_ew = ldevlr_2_ew;
@@ -226,6 +246,10 @@ for(size_t i=0; i<STEP; ++i) {
   rk.do_step(sys_gp, gp_run, log_ewscale, dth);
   rk.do_step(sys_gs, gs_run, log_ewscale, dth);
   log_ewscale = log_ewscale + dth;
+//  ofile<<exp(log_ewscale)<<" "<<clq1_1_run[0]<<endl;
+//  ofile<<exp(log_ewscale)<<" "<<clq3_1_run[0]<<endl;
+  ofile<<exp(log_ewscale)<<" "<<clq1_1_run[0]+clq3_1_run[0]<<endl;
+//  ofile<<exp(log_ewscale)<<" "<<cqe_1_run[0]<<endl;
 }
 
 

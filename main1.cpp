@@ -17,7 +17,7 @@ const int STEP = 100;
 int main(int argc, char **argv) {
 
 fstream ofile;
-ofile.open("output.txt", ios_base::out);
+ofile.open("output1.txt", ios_base::out);
 
 double hscale = 1000.0;
 double ewscale = 91.1876;
