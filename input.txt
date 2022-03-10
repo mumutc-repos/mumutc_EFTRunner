@@ -1,0 +1,9 @@
+#Physical scales
+1000                 #UV scale for new physics
+91.1876              #EW scale for matching
+5.0                  #Low scale for B physics
+
+#SM parameters at EW scale
+0.6515               #SU(2) gauge coupling
+0.3576               #U(1) gauge coupling
+1.2200               #SU(3) gauge coupling

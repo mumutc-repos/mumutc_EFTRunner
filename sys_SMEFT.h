@@ -1,3 +1,6 @@
+#ifndef SYS_SMEFT_H
+#define SYS_SMEFT_H
+
 #include <cmath>
 #include "state_type.h"
 
@@ -40,3 +43,5 @@ struct sys_qe {
     dxdt[0] = (4.0/3.0*gp*gp*(clq1_1+clq1_2+clq1_3+x[0]+cqe_2+cqe_3)+2.0*gp*gp*x[0]+0.5*Gu33*Gu33*x[0])/(16.0*M_PI*M_PI);
  }
 };//C_qe
+
+#endif

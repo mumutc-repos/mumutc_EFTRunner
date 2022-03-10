@@ -1,3 +1,6 @@
+#ifndef SYS_LEFT_H
+#define SYS_LEFT_H
+
 #include <cmath>
 #include "state_type.h"
 
@@ -24,3 +27,5 @@ struct sys_devlr {
     dxdt[0] = (-8.0/3.0*eqed*eqed*x[0]+4.0/3.0*(ldevlr_2+ldevlr_3+ledvll_1+ledvll_2+ledvll_3))/(16.0*M_PI*M_PI);
   }
 };// L^{V,LR}_{de}
+
+#endif

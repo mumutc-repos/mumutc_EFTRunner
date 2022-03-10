@@ -2,25 +2,30 @@ CXX = g++
 
 CFLAGS = -std=c++0x
 
-SRCS=*.cpp
-OBJS=$(SRCS:.cpp=.o)
+SRCS=$(wildcard *.cpp)
+OBJS=$(patsubst %.cpp, %.o, $(SRCS))
 
-OBJS1=main1.o sys_SM.o
 EXEC1=main1
-
-OBJS2=main2.o sys_SM.o
 EXEC2=main2
 
-all:$(OBJS) $(EXEC1) $(EXEC2)
+MOBJS=$(wildcard main*.o)
+SOBJS=$(filter-out $(MOBJS), $(OBJS))
 
-$(EXEC1): $(OBJS1) 
+all:
+	@echo $(OBJS)
+	@echo $(MOBJS)
+	@echo $(SOBJS)
+# all:$(OBJS) $(EXEC1) $(EXEC2)
+
+$(EXEC1): main1.o $(SOBJS)  
 	$(CXX) $^ -o $@
 
-$(EXEC2): $(OBJS2) 
+$(EXEC2): main2.o $(SOBJS) 
 	$(CXX) $^ -o $@
 
 $(OBJS): $(SRCS)
 	$(CXX) $(CFLAGS) -c $^
 
+.PHONY:clean
 clean:
-	rm *.o
+	rm *.o $(EXEC1) $(EXEC2)
