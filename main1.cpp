@@ -8,6 +8,8 @@
 #include "sys_SM.h"
 #include "sys_SMEFT.h"
 #include "sys_LEFT.h"
+#include "read_input.h"
+#include "param.h"
 
 using namespace std;
 using namespace boost::numeric::odeint;
@@ -16,40 +18,22 @@ const int STEP = 100;
 
 int main(int argc, char **argv) {
 
+string input_file1 = "input_SM.txt";
+string input_file2 = "input_SMEFT.txt";
+
 fstream ofile;
 ofile.open("output1.txt", ios_base::out);
-
-double hscale = 1000.0;
-double ewscale = 91.1876;
-double lscale = 5.0;
 
 double log_hscale, log_ewscale, log_lscale;
 double dth, dtl;
 
-//EW input
-double g_ew, gp_ew, gs_ew;
-double gqcd_ew, eqed_ew;
-double Gu33_ew;
-double sw_ew;
-
+//EW parameters
 double clq1_1_ew, clq1_2_ew, clq1_3_ew;
 double clq3_1_ew, clq3_2_ew, clq3_3_ew;
 double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 
 double ledvll_1_ew, ledvll_2_ew, ledvll_3_ew;
 double ldevlr_1_ew, ldevlr_2_ew, ldevlr_3_ew;
-
-//high scale input
-double g_h, gp_h, gs_h;
-double Gu33_h;
-
-double clq1_1_h, clq1_2_h, clq1_3_h;
-double clq3_1_h, clq3_2_h, clq3_3_h;
-double cqe_1_h, cqe_2_h, cqe_3_h;
-
-//low scale input
-double ledvll_1_l, ledvll_2_l, ledvll_3_l;
-double ldevlr_1_l, ldevlr_2_l, ldevlr_3_l;
 
 //system functions
 state_type g_run, gp_run, gs_run;
@@ -63,13 +47,9 @@ state_type cqe_1_run, cqe_2_run, cqe_3_run;
 state_type ledvll_1_run, ledvll_2_run, ledvll_3_run;
 state_type ldevlr_1_run, ldevlr_2_run, ldevlr_3_run;
 
-g_ew = 0.6515;
-gp_ew = 0.3576;
-gs_ew = 1.220;
-gqcd_ew = 1.220;
-Gu33_ew = 1.000;
-sw_ew = sqrt(gp_ew*gp_ew/(gp_ew*gp_ew+g_ew*g_ew));
-eqed_ew = g_ew*sw_ew;
+//read input from files
+read_sm_input(input_file1);
+read_smeft_input(input_file2);
 
 log_hscale = log(hscale);
 log_ewscale = log(ewscale);
@@ -78,18 +58,6 @@ log_lscale = log(lscale);
 dth = (log_hscale-log_ewscale)/STEP;
 dtl = (log_lscale-log_ewscale)/STEP;
 cout<<dth<<endl;
-
-clq1_1_h = 0.0e-6;
-clq1_2_h = 0.0e-6;
-clq1_3_h = 0.0e-6;
-
-clq3_1_h = 0.0e-6;
-clq3_2_h = 0.0e-6;
-clq3_3_h = 0.0e-6;
-
-cqe_1_h = 1.0e-6;
-cqe_2_h = 0.0e-6;
-cqe_3_h = 0.0e-6;
 
 g_run[0] = g_ew;
 gp_run[0] = gp_ew;

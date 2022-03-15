@@ -8,6 +8,8 @@
 #include "sys_SM.h"
 #include "sys_SMEFT.h"
 #include "sys_LEFT.h"
+#include "read_input.h"
+#include "param.h"
 
 using namespace std;
 using namespace boost::numeric::odeint;
@@ -16,22 +18,16 @@ const int STEP = 100;
 
 int main(int argc, char **argv) {
 
+string input_file1 = "input_SM.txt";
+string input_file2 = "input_LEFT.txt";
+
 fstream ofile;
 ofile.open("output2.txt", ios_base::out);
-
-double hscale = 1000.0;
-double ewscale = 91.1876;
-double lscale = 5.0;
 
 double log_hscale, log_ewscale, log_lscale; 
 double dth, dtl;
 
-//EW input
-double g_ew, gp_ew, gs_ew;
-double gqcd_ew, eqed_ew;
-double Gu33_ew;
-double sw_ew;
-
+//EW parameters
 double ledvll_1_ew, ledvll_2_ew, ledvll_3_ew;
 double ldevlr_1_ew, ldevlr_2_ew, ldevlr_3_ew;
 
@@ -39,23 +35,11 @@ double clq1_1_ew, clq1_2_ew, clq1_3_ew;
 double clq3_1_ew, clq3_2_ew, clq3_3_ew;
 double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 
-//low scale input
-double gqcd_l, eqed_l;
+//parameters for transformation from C9 and C10 to LedVLL and LdeVLR
 double vtb = 1.013;
 double vts = 0.0388;
 double Gf = 1.1663787e-5;
 double factor;
-
-double ledvll_1_l, ledvll_2_l, ledvll_3_l;
-double ldevlr_1_l, ldevlr_2_l, ldevlr_3_l;
-
-//high scale input
-double g_h, gp_h, gs_h;
-double Gu33_h;
-
-double clq1_1_h, clq1_2_h, clq1_3_h;
-double clq3_1_h, clq3_2_h, clq3_3_h;
-double cqe_1_h, cqe_2_h, cqe_3_h;
 
 //system functions
 state_type g_run, gp_run, gs_run;
@@ -69,13 +53,9 @@ state_type clq1_1_run, clq1_2_run, clq1_3_run;
 state_type clq3_1_run, clq3_2_run, clq3_3_run;
 state_type cqe_1_run, cqe_2_run, cqe_3_run;
 
-g_ew = 0.6515;
-gp_ew = 0.3576;
-gs_ew = 1.220;
-gqcd_ew = 1.220;
-Gu33_ew = 1.000;
-sw_ew = sqrt(gp_ew*gp_ew/(gp_ew*gp_ew+g_ew*g_ew));
-eqed_ew = g_ew*sw_ew;
+//read input from files
+read_sm_input(input_file1);
+read_left_input(input_file2);
 
 log_hscale = log(hscale);
 log_ewscale = log(ewscale);
@@ -83,14 +63,6 @@ log_lscale = log(lscale);
 
 dth = (log_hscale-log_ewscale)/STEP;
 dtl = (log_ewscale-log_lscale)/STEP;
-
-ledvll_1_l = 0.66;
-ledvll_2_l = 0.0e-6;
-ledvll_3_l = 0.0e-6;
-
-ldevlr_1_l = -0.66;
-ldevlr_2_l = 0.0e-6;
-ldevlr_3_l = 0.0e-6;
 
 eqed_run[0] = eqed_ew;
 gqcd_run[0] = gqcd_ew;
