@@ -4,6 +4,9 @@
 5.0                  #Low scale for B physics
 
 #SM parameters at EW scale
+1.2200               #SU(3) gauge coupling
 0.6515               #SU(2) gauge coupling
 0.3576               #U(1) gauge coupling
-1.2200               #SU(3) gauge coupling
+1.2200               #QCD gauge coupling
+0.3135               #QED gauge coupling
+1.0000               #the (3,3) element of Yukawa matrix
