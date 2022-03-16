@@ -44,7 +44,7 @@ void read_smeft_input(string input_file) {
   ifile.open(input_file, ios_base::in);
 
   string line;
-  string str[10];
+  string str[20];
 
   size_t i=0;
 
@@ -64,6 +64,12 @@ void read_smeft_input(string input_file) {
         if(i==6) {str[i].erase(pos); iss<<str[i]; iss>>cqe_1_h;}
         if(i==7) {str[i].erase(pos); iss<<str[i]; iss>>cqe_2_h;}
         if(i==8) {str[i].erase(pos); iss<<str[i]; iss>>cqe_3_h;}
+        if(i==9) {str[i].erase(pos); iss<<str[i]; iss>>ced_1_h;}
+        if(i==10) {str[i].erase(pos); iss<<str[i]; iss>>ced_2_h;}
+        if(i==11) {str[i].erase(pos); iss<<str[i]; iss>>ced_3_h;}
+        if(i==12) {str[i].erase(pos); iss<<str[i]; iss>>cld_1_h;}
+        if(i==13) {str[i].erase(pos); iss<<str[i]; iss>>cld_2_h;}
+        if(i==14) {str[i].erase(pos); iss<<str[i]; iss>>cld_3_h;}
       }
       i++;
     }
@@ -75,7 +81,7 @@ void read_left_input(string input_file) {
   ifile.open(input_file, ios_base::in);
 
   string line;
-  string str[10];
+  string str[20];
 
   size_t i=0;
 
@@ -92,6 +98,12 @@ void read_left_input(string input_file) {
         if(i==3) {str[i].erase(pos); iss<<str[i]; iss>>ldevlr_1_l;}
         if(i==4) {str[i].erase(pos); iss<<str[i]; iss>>ldevlr_2_l;}
         if(i==5) {str[i].erase(pos); iss<<str[i]; iss>>ldevlr_3_l;}
+        if(i==6) {str[i].erase(pos); iss<<str[i]; iss>>ledvlr_1_l;}
+        if(i==7) {str[i].erase(pos); iss<<str[i]; iss>>ledvlr_2_l;}
+        if(i==8) {str[i].erase(pos); iss<<str[i]; iss>>ledvlr_3_l;}
+        if(i==9) {str[i].erase(pos); iss<<str[i]; iss>>ledvrr_1_l;}
+        if(i==10) {str[i].erase(pos); iss<<str[i]; iss>>ledvrr_2_l;}
+        if(i==11) {str[i].erase(pos); iss<<str[i]; iss>>ledvrr_3_l;}
       }
       i++;
     }
