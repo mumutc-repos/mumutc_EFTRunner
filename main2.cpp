@@ -39,7 +39,9 @@ double cqe_1_ew, cqe_2_ew, cqe_3_ew;
 double vtb = 1.013;
 double vts = 0.0388;
 double Gf = 1.1663787e-5;
+double vev = 246.0;
 double factor;
+double sfactor;
 
 //system functions
 state_type g_run, gp_run, gs_run;
@@ -77,13 +79,13 @@ for(size_t i=0; i<STEP; ++i) {
 factor = 4.0*Gf*vtb*vts*eqed_run[0]*eqed_run[0]/(16.0*M_PI*M_PI)/sqrt(2);
 
 //LEFT run
-ledvll_1_run[0] = ledvll_1_l*factor/2.0;
-ledvll_2_run[0] = ledvll_2_l*factor/2.0;
-ledvll_3_run[0] = ledvll_3_l*factor/2.0;
+ledvll_1_run[0] = (ledvll_1_l-ledvlr_1_l)*vev*vev*factor/2.0;
+ledvll_2_run[0] = (ledvll_2_l-ledvlr_2_l)*vev*vev*factor/2.0;
+ledvll_3_run[0] = (ledvll_3_l-ledvlr_3_l)*vev*vev*factor/2.0;
 
-ldevlr_1_run[0] = ldevlr_1_l*factor/2.0;
-ldevlr_2_run[0] = ldevlr_2_l*factor/2.0;
-ldevlr_3_run[0] = ldevlr_3_l*factor/2.0;
+ldevlr_1_run[0] = (ledvll_1_l+ldevlr_1_l)*vev*vev*factor/2.0;
+ldevlr_2_run[0] = (ledvll_2_l+ldevlr_2_l)*vev*vev*factor/2.0;
+ldevlr_3_run[0] = (ledvll_3_l+ldevlr_3_l)*vev*vev*factor/2.0;
 
 cout<<"low scale: "<<exp(log_ewscale)<<endl;
 cout<<"eqed="<<eqed_run[0]<<endl;
@@ -137,39 +139,41 @@ ldevlr_3_ew = ldevlr_3_run[0];
 
 log_ewscale = log_lscale;
 
+sfactor = hscale*hscale/(vev*vev);
+
 //Case 1: clq1 = ledvll
 //Case 2: clq3 = ledvll
 //Case 3: clq1 = clq3 = ledvll/2
-// clq1_1_ew = ledvll_1_ew;
-clq1_1_ew = 0.0;
-// clq1_2_ew = ledvll_2_ew;
-clq1_2_ew = 0.0;
-// clq1_3_ew = ledvll_3_ew;
-clq1_3_ew = 0.0;
+clq1_1_ew = ledvll_1_ew;
+// clq1_1_ew = 0.0;
+clq1_2_ew = ledvll_2_ew;
+// clq1_2_ew = 0.0;
+clq1_3_ew = ledvll_3_ew;
+// clq1_3_ew = 0.0;
 
-clq3_1_ew = ledvll_1_ew;
-// clq3_1_ew = 0.0;
-clq3_2_ew = ledvll_2_ew;
-// clq3_2_ew = 0.0;
-clq3_3_ew = ledvll_3_ew;
-// clq3_3_ew = 0.0;
+// clq3_1_ew = ledvll_1_ew;
+clq3_1_ew = 0.0;
+// clq3_2_ew = ledvll_2_ew;
+clq3_2_ew = 0.0;
+// clq3_3_ew = ledvll_3_ew;
+clq3_3_ew = 0.0;
 
 cqe_1_ew = ldevlr_1_ew;
 cqe_2_ew = ldevlr_2_ew;
 cqe_3_ew = ldevlr_3_ew;
 
 //SMEFT run
-clq1_1_run[0] = clq1_1_ew;
-clq1_2_run[0] = clq1_2_ew;
-clq1_3_run[0] = clq1_3_ew;
+clq1_1_run[0] = clq1_1_ew*sfactor;
+clq1_2_run[0] = clq1_2_ew*sfactor;
+clq1_3_run[0] = clq1_3_ew*sfactor;
 
-clq3_1_run[0] = clq3_1_ew;
-clq3_2_run[0] = clq3_2_ew;
-clq3_3_run[0] = clq3_3_ew;
+clq3_1_run[0] = clq3_1_ew*sfactor;
+clq3_2_run[0] = clq3_2_ew*sfactor;
+clq3_3_run[0] = clq3_3_ew*sfactor;
 
-cqe_1_run[0] = cqe_1_ew;
-cqe_2_run[0] = cqe_2_ew;
-cqe_3_run[0] = cqe_3_ew;
+cqe_1_run[0] = cqe_1_ew*sfactor;
+cqe_2_run[0] = cqe_2_ew*sfactor;
+cqe_3_run[0] = cqe_3_ew*sfactor;
 
 g_run[0] = g_ew;
 gp_run[0] = gp_ew;
@@ -220,12 +224,12 @@ for(size_t i=0; i<STEP; ++i) {
   log_ewscale = log_ewscale + dth;
 //  ofile<<exp(log_ewscale)<<" "<<clq1_1_run[0]<<endl;
 //  ofile<<exp(log_ewscale)<<" "<<clq3_1_run[0]<<endl;
-  ofile<<exp(log_ewscale)<<" "<<clq1_1_run[0]+clq3_1_run[0]<<endl;
+  ofile<<exp(log_ewscale)<<" "<<clq1_2_run[0]+clq3_2_run[0]<<endl;
 //  ofile<<exp(log_ewscale)<<" "<<cqe_1_run[0]<<endl;
 }
 
 
-cout<<"EW scale: "<<exp(log_ewscale)<<endl;
+cout<<"high scale: "<<exp(log_ewscale)<<endl;
 cout<<"g="<<g_run[0]<<endl;
 cout<<"gp="<<gp_run[0]<<endl;
 cout<<"gs="<<gs_run[0]<<endl;

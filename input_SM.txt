@@ -1,5 +1,5 @@
 #Physical scales
-1000                 #UV scale for new physics
+10000                 #UV scale for new physics
 91.1876              #EW scale for matching
 5.0                  #Low scale for B physics
 
