@@ -14,7 +14,7 @@
 using namespace std;
 using namespace boost::numeric::odeint;
 
-const int STEP = 100;
+const int STEP = 1000;
 
 int main(int argc, char **argv) {
 
@@ -79,9 +79,9 @@ for(size_t i=0; i<STEP; ++i) {
 factor = 4.0*Gf*vtb*vts*eqed_run[0]*eqed_run[0]/(16.0*M_PI*M_PI)/sqrt(2);
 
 //LEFT run
-ledvll_1_run[0] = (ledvll_1_l-ledvlr_1_l)*vev*vev*factor/2.0;
-ledvll_2_run[0] = (ledvll_2_l-ledvlr_2_l)*vev*vev*factor/2.0;
-ledvll_3_run[0] = (ledvll_3_l-ledvlr_3_l)*vev*vev*factor/2.0;
+ledvll_1_run[0] = (ledvll_1_l-ldevlr_1_l)*vev*vev*factor/2.0;
+ledvll_2_run[0] = (ledvll_2_l-ldevlr_2_l)*vev*vev*factor/2.0;
+ledvll_3_run[0] = (ledvll_3_l-ldevlr_3_l)*vev*vev*factor/2.0;
 
 ldevlr_1_run[0] = (ledvll_1_l+ldevlr_1_l)*vev*vev*factor/2.0;
 ldevlr_2_run[0] = (ledvll_2_l+ldevlr_2_l)*vev*vev*factor/2.0;
@@ -144,19 +144,19 @@ sfactor = hscale*hscale/(vev*vev);
 //Case 1: clq1 = ledvll
 //Case 2: clq3 = ledvll
 //Case 3: clq1 = clq3 = ledvll/2
-clq1_1_ew = ledvll_1_ew;
+clq1_1_ew = ledvll_1_ew*4.0/4.0;
 // clq1_1_ew = 0.0;
-clq1_2_ew = ledvll_2_ew;
+clq1_2_ew = ledvll_2_ew*4.0/4.0;
 // clq1_2_ew = 0.0;
-clq1_3_ew = ledvll_3_ew;
+clq1_3_ew = ledvll_3_ew*4.0/4.0;
 // clq1_3_ew = 0.0;
 
-// clq3_1_ew = ledvll_1_ew;
-clq3_1_ew = 0.0;
-// clq3_2_ew = ledvll_2_ew;
-clq3_2_ew = 0.0;
-// clq3_3_ew = ledvll_3_ew;
-clq3_3_ew = 0.0;
+clq3_1_ew = ledvll_1_ew*0.0/4.0;
+// clq3_1_ew = 0.0;
+clq3_2_ew = ledvll_2_ew*0.0/4.0;
+// clq3_2_ew = 0.0;
+clq3_3_ew = ledvll_3_ew*0.0/4.0;
+// clq3_3_ew = 0.0;
 
 cqe_1_ew = ldevlr_1_ew;
 cqe_2_ew = ldevlr_2_ew;
