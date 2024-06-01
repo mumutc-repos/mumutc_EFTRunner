@@ -1,4 +1,4 @@
-# eebs
+# mumutc_EFTRunner
 A program to connect LEFT and SMEFT. One can compile codes by running **make**. 
 
 This will generate two executable:
