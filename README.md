@@ -1,5 +1,5 @@
 # mumutc_EFTRunner
-A program to connect LEFT and SMEFT. One can compile codes by running **make**. 
+A program to connect LEFT and SMEFT. The boost library ([https://www.boost.org/](https://www.boost.org/)) is required. One can compile codes by running **make**. 
 
 This will generate two executable:
 ```
